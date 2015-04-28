@@ -1,0 +1,113 @@
+<html>
+	<head>
+		<title>Rocky Mountain Itinerary</title>
+		<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/FileSaver.js"></script>
+		<script type="text/javascript" src="js/jsPDF/jspdf.js"></script>
+		<script type="text/javascript" src="js/jsPDF/jspdf.plugin.standard_fonts_metrics.js"></script> 
+		<script type="text/javascript" src="js/jsPDF/jspdf.plugin.split_text_to_size.js"></script>               
+		<script type="text/javascript" src="js/jsPDF/jspdf.plugin.from_html.js"></script>
+		<script type="text/javascript" src="js/itinerary.js"></script>
+		 <link rel="stylesheet" type="text/css" href="css/itinerary.css">
+		<style>
+			p {
+				font-size: 8pt;
+			}
+		</style>
+	</head>
+	<body>
+	
+		<div id="test">
+			<!--<img src="img/b1.png" data-type="vertical">-->
+			<span class="fillerTop"></span>
+			<h1>Rocky Mountain Itinerary</h1>
+			<hr>
+		</div>
+
+		<div id = "return">
+		<button  onclick="window.location.href='../index.html#map'">Return to Park Map</button>
+	</div>
+
+	<div id="removeAll">
+	<button onclick="removeItin('all','all')">Remove All From Itinerary</button>
+</div>
+		
+		<div id="download">
+			<button onclick="download()">Download PDF</button>
+		</div>
+		
+		<script>
+		
+			var place = document.getElementById("test");
+			if (localStorage.Choices) {
+				var tC = JSON.parse(localStorage.Choices);
+				for (i=0; i<tC.length; i++) {
+				
+					//checking if anything was selected in a given area
+					if (tC[i].boolean) {
+						//creating text
+						var Title = document.createElement("H2");
+						var TitleText = document.createTextNode(tC[i].area);
+						console.log(tC[i].area);
+						Title.appendChild(TitleText);
+						place.appendChild(Title);
+						//adding time
+						var Time = document.createElement("H3");
+						var TimeText = "";
+						if (tC[i].time != "") {
+							TimeText = tC[i].time;
+						} else {
+							TimeText = "No time selected";
+						}
+						Time.innerHTML = "<strong>Time:</strong> " + TimeText;
+						place.appendChild(Time);
+						
+						for (k=0; k<tC[i].activities.length; k++) {
+							if (tC[i].activities[k].boolean) {
+								var Name = document.createElement("H4");
+								Name.innerHTML = tC[i].activities[k].name;
+								place.appendChild(Name);
+							}	
+						}
+					}
+				}
+				/*console.log(JSON.parse(localStorage.Choices));
+				var info = JSON.parse(localStorage.Choices);
+				for (i=0; i<info.length; i++) {
+					//var node2 = document.createElement("P");
+					if (info[i].boolean) {
+						var node2 = document.createElement("P");
+						for (k=0; k<Inform.length; k++) {
+							if (Inform[k].name == info[i].name) {
+								var textNode = document.createTextNode(Inform[k].name);
+								break;
+							}
+						}
+						node2.appendChild(textNode);
+						place.appendChild(node2);
+					}
+				}*/
+			
+			} else {
+				var node2 = document.createElement("P");
+				var textNode = document.createTextNode("You didn't choose anything!");
+				node2.appendChild(textNode);
+				place.appendChild(node2);
+			}
+			
+			function download() {
+				var pdf = new jsPDF();
+				pdf.fromHTML(
+					source = $('#test').get(0), 15, 15,
+					 {
+						 'width': 100, // max width of content on PDF
+						 //'elementHandlers': specialElementHandlers
+					 }
+				);
+				pdf.save('Rocky Mountain Itinerary')
+				
+			}
+		</script>
+	
+	</body>
+</html>
